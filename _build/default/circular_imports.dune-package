@@ -1,0 +1,4 @@
+(lang dune 3.17)
+(name circular_imports)
+(sections (lib .) (bin ../../bin))
+(files (lib (META dune-package opam)) (bin (circular_imports)))

@@ -1,0 +1,3 @@
+(library
+ (name circular_imports)
+ (libraries cmdliner base stdio pyre-ast))

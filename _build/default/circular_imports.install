@@ -1,0 +1,8 @@
+lib: [
+  "_build/install/default/lib/circular_imports/META"
+  "_build/install/default/lib/circular_imports/dune-package"
+  "_build/install/default/lib/circular_imports/opam"
+]
+bin: [
+  "_build/install/default/bin/circular_imports"
+]

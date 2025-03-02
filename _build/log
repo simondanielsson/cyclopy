@@ -1,0 +1,22 @@
+# dune build
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location: /Users/danielssonsimon/.cache/dune/db
+# Workspace root: /Users/danielssonsimon/projects/circular_imports
+# Auto-detected concurrency: 12
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /Users/danielssonsimon/.opam/circular_imports/bin/ocamlc.opt -config > /var/folders/7y/b78z9gln7d732tpnz06jtyr00000gn/T/dune_b71879_output
+$ (cd _build/default && /Users/danielssonsimon/.opam/circular_imports/bin/ocamlc.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I lib/.circular_imports.objs/byte -I /Users/danielssonsimon/.opam/circular_imports/lib/base -I /Users/danielssonsimon/.opam/circular_imports/lib/base/base_internalhash_types -I /Users/danielssonsimon/.opam/circular_imports/lib/base/shadow_stdlib -I /Users/danielssonsimon/.opam/circular_imports/lib/cmdliner -I /Users/danielssonsimon/.opam/circular_imports/lib/ocaml_intrinsics_kernel -I /Users/danielssonsimon/.opam/circular_imports/lib/ppx_compare/runtime-lib -I /Users/danielssonsimon/.opam/circular_imports/lib/ppx_hash/runtime-lib -I /Users/danielssonsimon/.opam/circular_imports/lib/ppx_sexp_conv/runtime-lib -I /Users/danielssonsimon/.opam/circular_imports/lib/pyre-ast -I /Users/danielssonsimon/.opam/circular_imports/lib/sexplib0 -I /Users/danielssonsimon/.opam/circular_imports/lib/stdio -no-alias-deps -opaque -open Circular_imports -o lib/.circular_imports.objs/byte/circular_imports__Analyzer.cmo -c -impl lib/analyzer.ml)
+> File "lib/analyzer.ml", line 10, characters 19-27:
+> 10 | module StringSet = Set.Make (String)
+>                         ^^^^^^^^
+> Error: Unbound module Set.Make
+[2]

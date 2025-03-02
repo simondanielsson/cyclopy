@@ -1,0 +1,4 @@
+(executable
+ (public_name circular_imports)
+ (name main)
+ (libraries circular_imports base stdio pyre-ast))
