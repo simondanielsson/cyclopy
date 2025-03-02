@@ -1,7 +1,10 @@
-.PHONY: default venv
+.PHONY: build e venv
 
-default:
-	@dune build && dune exec circular_imports
+build:
+	@dune build
+
+e: build
+	./_build/default/bin/main.exe @a
 
 venv:
 	@eval $(opam env)

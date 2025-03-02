@@ -6,134 +6,31 @@ type import =
   ; target : string
   }
 
-(* Graph representation for detecting circular dependencies *)
-module StringSet = Set.Make (String)
-module StringMap = Map.Make (String)
-
-type import_graph = StringSet.t StringMap.t
-
-(* Extract imports from a Python module *)
-let extract_imports module_ast =
+let extract_imports ~verbose (module_ast : PyreAst.Concrete.Module.t) =
   let open PyreAst.Concrete in
-  let rec visit_stmt imports = function
-    | Import { Import.imports; _ } ->
-      List.fold imports ~init:imports ~f:(fun acc { Import.name; _ } ->
-        { source = "current_module"; target = name } :: acc)
-    | ImportFrom { ImportFrom.module_name; _ } ->
-      { source = "current_module"; target = module_name } :: imports
-    | Block { Block.statements; _ } ->
-      List.fold statements ~init:imports ~f:(fun acc stmt -> visit_stmt acc stmt)
+  let visit_stmt imports = function
+    | Statement.Import { names; _ } ->
+      List.fold names ~init:imports ~f:(fun acc import_alias ->
+        let import_name = Identifier.to_string import_alias.name in
+        Logger.log verbose ("Found import statement: " ^ import_name);
+        { source = "current_module"; target = import_name } :: acc)
+    | Statement.ImportFrom { module_ = Some module_name; _ } ->
+      let import_name = Identifier.to_string module_name in
+      Logger.log verbose ("Found from-import statement: " ^ import_name);
+      { source = "current_module"; target = import_name } :: imports
     | _ -> imports
   in
-  match module_ast with
-  | Module { Module.statements; _ } ->
-    List.fold statements ~init:[] ~f:(fun acc stmt -> visit_stmt acc stmt)
-  | _ -> []
-;;
-
-(* Build a graph from import statements *)
-let build_graph ~source_file imports =
-  let base_module = Filename.basename source_file |> Filename.chop_extension in
-  (* Initialize with empty dependencies for all modules *)
-  let init_graph =
-    List.fold imports ~init:StringMap.empty ~f:(fun acc { source; target } ->
-      let real_source =
-        if String.equal source "current_module" then base_module else source
-      in
-      let graph =
-        if not (StringMap.mem acc real_source)
-        then StringMap.set acc ~key:real_source ~data:StringSet.empty
-        else acc
-      in
-      if not (StringMap.mem graph target)
-      then StringMap.set graph ~key:target ~data:StringSet.empty
-      else graph)
-  in
-  (* Add all dependencies *)
-  List.fold imports ~init:init_graph ~f:(fun acc { source; target } ->
-    let real_source =
-      if String.equal source "current_module" then base_module else source
-    in
-    let current_deps =
-      match StringMap.find acc real_source with
-      | Some deps -> deps
-      | None -> StringSet.empty
-    in
-    StringMap.set acc ~key:real_source ~data:(StringSet.add current_deps target))
-;;
-
-(* DFS to find cycles *)
-let find_cycles graph =
-  let cycles = ref [] in
-  let rec dfs path visited node =
-    if StringSet.mem visited node
-    then (
-      (* Check if we've found a cycle *)
-      match List.findi path ~f:(fun _ n -> String.equal n node) with
-      | Some (idx, _) ->
-        let cycle = List.sub path ~pos:idx ~len:(List.length path - idx) in
-        cycles := (cycle @ [ node ]) :: !cycles
-      | None -> ())
-    else (
-      let visited = StringSet.add visited node in
-      let neighbors =
-        match StringMap.find graph node with
-        | Some deps -> StringSet.to_list deps
-        | None -> []
-      in
-      List.iter neighbors ~f:(fun neighbor -> dfs (path @ [ node ]) visited neighbor))
-  in
-  StringMap.iter_keys graph ~f:(fun node -> dfs [] StringSet.empty node);
-  !cycles
-;;
-
-(* Format cycles for display *)
-let format_cycles cycles =
-  if List.is_empty cycles
-  then "No circular imports found."
-  else (
-    let cycle_strings =
-      List.mapi cycles ~f:(fun i cycle ->
-        let cycle_str = String.concat ~sep:" -> " cycle in
-        Printf.sprintf "Cycle %d: %s" (i + 1) cycle_str)
-    in
-    String.concat ~sep:"\n" cycle_strings)
-;;
-
-open Base
-
-(* Represent a module import relationship *)
-type import =
-  { source : string
-  ; target : string
-  }
-
-(* Extract import statements from a Python AST *)
-let extract_imports module_ast =
-  let open PyreAst.Ast.Statement in
-  let rec extract_from_statements statements imports =
-    List.fold statements ~init:imports ~f:(fun acc statement ->
-      match statement with
-      | Import { imports; _ } ->
-        List.fold imports ~init:acc ~f:(fun acc_inner import ->
-          let target = import.PyreAst.Ast.Import.name.PyreAst.Ast.Identifier.value in
-          { source = "current_module"; target } :: acc_inner)
-      | ImportFrom { from = Some from; imports; _ } ->
-        let from_module = from.PyreAst.Ast.ImportFrom.name.PyreAst.Ast.Identifier.value in
-        List.fold imports ~init:acc ~f:(fun acc_inner import ->
-          let target = from_module in
-          { source = "current_module"; target } :: acc_inner)
-      | _ -> acc)
-  in
-  match module_ast with
-  | PyreAst.Ast.Module.Module { body; _ } -> extract_from_statements body []
-  | _ -> []
+  List.fold module_ast.body ~init:[] ~f:(fun acc stmt -> visit_stmt acc stmt)
 ;;
 
 (* Convert source module name once we know the actual file being processed *)
-let normalize_imports file_path imports =
-  let module_name = Filename.basename file_path |> Filename.chop_extension in
+let normalize_imports ~verbose file_path imports =
+  let module_name = Stdlib.Filename.(basename file_path |> chop_extension) in
+  Logger.log
+    verbose
+    (Printf.sprintf "Normalizing import using module name %s if applicable" module_name);
   List.map imports ~f:(fun import ->
+    Logger.log verbose ("Source and target:" ^ import.source ^ " " ^ import.target);
     if String.equal import.source "current_module"
     then { import with source = module_name }
     else import)
@@ -150,7 +47,7 @@ let build_graph imports =
 ;;
 
 (* Find cycles in the import graph using DFS *)
-let find_cycles graph =
+let find_cycles ~verbose graph =
   let visited = Hashtbl.create (module String) in
   let rec_stack = Hashtbl.create (module String) in
   let cycles = ref [] in
@@ -159,22 +56,36 @@ let find_cycles graph =
     Hashtbl.set rec_stack ~key:node ~data:true;
     match Hashtbl.find graph node with
     | Some neighbors ->
+      Logger.log
+        verbose
+        (Printf.sprintf "Found %d neighbors to node: %s" (List.length neighbors) node);
       List.iter neighbors ~f:(fun neighbor ->
-        let cycle_found = ref false in
         if not (Hashtbl.mem visited neighbor)
         then dfs neighbor (neighbor :: path)
         else if Hashtbl.find_exn rec_stack neighbor
         then (
           (* Found a cycle *)
+          Logger.log verbose ("Found cycle to neightbor " ^ neighbor);
           let cycle_path = neighbor :: path in
+          Logger.log verbose ("Cycle path " ^ String.concat ~sep:"-" (List.rev cycle_path));
           let cycle_start_idx =
             List.findi cycle_path ~f:(fun _ n -> String.equal n neighbor)
             |> Option.value_exn
             |> fst
           in
-          let cycle = List.take cycle_path (cycle_start_idx + 1) |> List.rev in
-          cycles := cycle :: !cycles;
-          cycle_found := true))
+          Logger.log verbose ("Cycle start index " ^ Int.to_string cycle_start_idx);
+          let cycle = List.drop cycle_path cycle_start_idx |> List.rev in
+          (* Only complete the cycle if it isn’t already complete *)
+          let cycle_complete =
+            match List.last cycle with
+            | Some last when String.equal last (List.hd_exn cycle) -> cycle
+            | _ -> cycle @ [ List.hd_exn cycle ]
+          in
+          Logger.log
+            verbose
+            ("Len of cycle before adding to all cycles list: "
+             ^ (List.length cycle_complete |> Int.to_string));
+          cycles := cycle_complete :: !cycles))
     | None ->
       ();
       Hashtbl.set rec_stack ~key:node ~data:false
@@ -186,7 +97,6 @@ let find_cycles graph =
 
 (* Format cycles for display *)
 let format_cycles cycles =
-  List.map cycles ~f:(fun cycle ->
-    String.concat ~sep:" -> " cycle ^ " -> " ^ List.hd_exn cycle)
+  List.map cycles ~f:(fun cycle -> String.concat ~sep:" -> " cycle)
   |> String.concat ~sep:"\n"
 ;;

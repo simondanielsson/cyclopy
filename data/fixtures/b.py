@@ -1,4 +1,3 @@
-# Module b.py
 import c
 
 

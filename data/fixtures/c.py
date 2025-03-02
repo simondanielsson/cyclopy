@@ -1,5 +1,4 @@
-# Module c.py
-import a
+from main import function_a
 
 
 def function_c():

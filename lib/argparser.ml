@@ -15,7 +15,10 @@ let term callback =
              ~docv:"FILE"
              ~docs:"ARGUMENTS"))
   in
-  Term.(const (fun file -> callback file) $ file)
+  let verbose =
+    Arg.(value & flag & info [ "v"; "verbose" ] ~doc:"Enable verbose logging")
+  in
+  Term.(const (fun file verbose -> callback file verbose) $ file $ verbose)
 ;;
 
 (* Define a info for the command line interface *)
