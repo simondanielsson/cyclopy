@@ -6,7 +6,7 @@ Cyclopy is a fast import-cycle checker for Python, written in OCaml. It detects 
 
 - Fast detection of circular imports in Python projects
 - Clear visualization of import cycles
-- Easy to install and use
+- Easy to install and use (TODO)
 
 ## Installation
 
