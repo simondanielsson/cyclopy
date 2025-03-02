@@ -49,13 +49,13 @@ dune build
 Run Cyclopy by specifying the entry point of your Python project:
 
 ```bash
-dune exec -- cyclopy /path/to/your/project/main.py
+dune exec -- circular_imports /path/to/your/project/main.py
 ```
 
 For verbose output, add the `-v` flag:
 
 ```bash
-dune exec -- cyclopy -v /path/to/your/project/main.py
+dune exec -- circular_imports -v /path/to/your/project/main.py
 ```
 
 ### Example Output
