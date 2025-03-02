@@ -23,9 +23,25 @@ let extract_imports ~verbose (module_ast : PyreAst.Concrete.Module.t) =
   List.fold module_ast.body ~init:[] ~f:(fun acc stmt -> visit_stmt acc stmt)
 ;;
 
+(* Compute the full module name based on the file path and project root *)
+let compute_full_module_name ~project_root file_path =
+  (* If file_path begins with project_root, remove it *)
+  let relative_path =
+    if String.is_prefix ~prefix:project_root file_path
+    then String.drop_prefix file_path (String.length project_root + 1)
+    else file_path
+  in
+  (* Remove the file extension *)
+  let file_without_extension = Stdlib.Filename.chop_extension relative_path in
+  (* Split the path using the system's directory separator and join with dots *)
+  let dir_separator = Char.of_string Stdlib.Filename.dir_sep in
+  let parts = String.split ~on:dir_separator file_without_extension in
+  String.concat ~sep:"." parts
+;;
+
 (* Convert source module name once we know the actual file being processed *)
-let normalize_imports ~verbose file_path imports =
-  let module_name = Stdlib.Filename.(basename file_path |> chop_extension) in
+let normalize_imports ~verbose ~project_root file_path imports =
+  let module_name = compute_full_module_name ~project_root file_path in
   Logger.log
     verbose
     (Printf.sprintf "Normalizing import using module name %s if applicable" module_name);

@@ -17,7 +17,7 @@ let parse_module file_content =
 ;;
 
 (* Process a single Python file and add its imports to the import map *)
-let process_file verbose all_imports file_name =
+let process_file ~verbose ~project_root all_imports file_name =
   let open Circular_imports.Logger in
   log verbose (Printf.sprintf "Processing file: %s" file_name);
   try
@@ -29,7 +29,11 @@ let process_file verbose all_imports file_name =
     let raw_imports = Circular_imports.Analyzer.extract_imports ~verbose module_ast in
     log verbose "Normalizing imports...";
     let imports =
-      Circular_imports.Analyzer.normalize_imports ~verbose file_name raw_imports
+      Circular_imports.Analyzer.normalize_imports
+        ~verbose
+        ~project_root
+        file_name
+        raw_imports
     in
     all_imports @ imports
     (* List.fold imports ~init:file_map ~f:(fun acc import -> *)
@@ -63,7 +67,9 @@ let find_cycles verbose entry_file =
   log verbose (Printf.sprintf "Found %d Python files:" (List.length python_files));
   List.iter python_files ~f:(fun name -> log verbose (Printf.sprintf "%s, " name));
   log verbose "\n";
-  let imports = List.fold python_files ~init:[] ~f:(process_file verbose) in
+  let imports =
+    List.fold python_files ~init:[] ~f:(process_file ~verbose ~project_root:dir)
+  in
   log verbose "Building import graph...";
   let graph = Circular_imports.Analyzer.build_graph imports in
   (* Find cycles in the import graph *)

@@ -11,7 +11,12 @@ type import =
 (** Extract import statements from a Python AST *)
 val extract_imports : verbose:bool -> PyreAst.Concrete.Module.t -> import list
 
-val normalize_imports : verbose:bool -> string -> import list -> import list
+val normalize_imports
+  :  verbose:bool
+  -> project_root:string
+  -> string
+  -> import list
+  -> import list
 
 (** Build a dependency graph from import statements *)
 val build_graph : import list -> (string, string list) Base.Hashtbl.t
