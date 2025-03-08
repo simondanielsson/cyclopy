@@ -81,7 +81,7 @@ let find_cycles ~verbose graph =
         else if Hashtbl.find_exn rec_stack neighbor
         then (
           (* Found a cycle *)
-          Logger.log verbose ("Found cycle to neightbor " ^ neighbor);
+          Logger.log verbose ("Found cycle to neighbor " ^ neighbor);
           let cycle_path = neighbor :: path in
           Logger.log verbose ("Cycle path " ^ String.concat ~sep:"-" (List.rev cycle_path));
           let cycle_start_idx =

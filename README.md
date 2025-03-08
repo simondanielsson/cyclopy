@@ -35,7 +35,7 @@ eval $(opam env)
 3. Install dependencies:
 
 ```bash
-opam install . --deps-only
+make install_dev
 ```
 
 4. Build the project:
@@ -84,5 +84,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ```
 
 This README provides clear installation instructions with local switch setup, usage examples, and a brief explanation of how the tool works. It also includes sections for features, contributing, and licensing information.
-
-
