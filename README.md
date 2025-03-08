@@ -8,6 +8,11 @@ Cyclopy is a fast import-cycle checker for Python, written in OCaml. It detects 
 - Clear visualization of import cycles
 - Easy to install and use (TODO)
 
+## How It Works
+
+Cyclopy analyzes your Python files to extract import statements, builds a directed graph of dependencies, and then detects cycles in this graph. It uses OCaml's speed and strong type system to provide fast and reliable results.
+
+
 ## Installation
 
 ### Prerequisites
@@ -76,9 +81,19 @@ main -> c -> main
 main -> b -> c -> main
 ```
 
-## How It Works
+## Generate documentation
 
-Cyclopy analyzes your Python files to extract import statements, builds a directed graph of dependencies, and then detects cycles in this graph. It uses OCaml's speed and strong type system to provide fast and reliable results.
+If you installed the doc dependencies, you can generate the documentation through
+
+```bash
+opam exec -- dune build @doc
+```
+
+and open the documentation using
+
+```bash
+open _build/default/_doc/_html/index.html
+```
 
 ## Contributing
 

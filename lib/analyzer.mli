@@ -11,6 +11,8 @@ type import =
 (** Extract import statements from a Python AST *)
 val extract_imports : verbose:bool -> PyreAst.Concrete.Module.t -> import list
 
+val compute_full_module_name : project_root:string -> string -> string
+
 val normalize_imports
   :  verbose:bool
   -> project_root:string

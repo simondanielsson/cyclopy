@@ -4,18 +4,6 @@ open Stdio
 (* Define a function that will be called with the file argument *)
 let read_file file_name = In_channel.with_file file_name ~f:In_channel.input_all
 
-let parse_module file_content =
-  let open PyreAst.Parser in
-  with_context (fun context ->
-    match Concrete.parse_module ~context file_content with
-    | Result.Error { Error.message; line; column; _ } ->
-      let message =
-        Printf.sprintf "Parsing error at line %d, column %d: %s" line column message
-      in
-      failwith message
-    | Result.Ok ast -> ast)
-;;
-
 (* Process a single Python file and add its imports to the import map *)
 let process_file ~verbose ~project_root all_imports file_name =
   let open Circular_imports.Logger in
@@ -24,7 +12,7 @@ let process_file ~verbose ~project_root all_imports file_name =
     log verbose "Reading file content...";
     let file_content = read_file file_name in
     log verbose "Parsing module...";
-    let module_ast = parse_module file_content in
+    let module_ast = Circular_imports.Parser.parse_module file_content in
     log verbose "Extracting imports...";
     let raw_imports = Circular_imports.Analyzer.extract_imports ~verbose module_ast in
     log verbose "Normalizing imports...";
@@ -64,6 +52,8 @@ let find_cycles verbose entry_file =
   log verbose (Printf.sprintf "Finding cycles starting from entry file: %s" entry_file);
   let dir = Stdlib.Filename.dirname entry_file in
   let python_files = find_python_files verbose dir in
+  let a = "hello" in
+  log verbose a;
   log verbose (Printf.sprintf "Found %d Python files:" (List.length python_files));
   List.iter python_files ~f:(fun name -> log verbose (Printf.sprintf "%s, " name));
   log verbose "\n";

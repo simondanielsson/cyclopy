@@ -2,6 +2,7 @@
 
 (name circular_imports)
 
+(cram enable)
 (generate_opam_files true)
 
 (source
@@ -21,13 +22,20 @@
  (description "A longer description")
  (depends
    (ocaml
-     (>= 5.2.1))
+     (>= 5.0.0))
    dune
+   core
    (odoc :with-doc)
+   (earlybird
+     (>= 1.3.3))
    ocamlformat
    pyre-ast
    base
-   cmdliner)
+   cmdliner
+   (pyml
+     (>= 20231101))
+   (expect_test_helpers_core :with-test)
+   )
  (tags
   ("add topics" "to describe" your project)))
 
