@@ -19,7 +19,13 @@
  (name circular_imports)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml)
+ (depends 
+   (ocaml (>= 5.2.1))
+   dune
+   (odoc :with-doc))
+   pyre-ast
+   base
+   cmdliner)
  (tags
   ("add topics" "to describe" your project)))
 
