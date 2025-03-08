@@ -52,6 +52,12 @@ Run Cyclopy by specifying the entry point of your Python project:
 dune exec -- circular_imports /path/to/your/project/main.py
 ```
 
+For instance:
+
+```bash
+dune exec -- circular_imports data/fixtures/main.py
+```
+
 For verbose output, add the `-v` flag:
 
 ```bash
