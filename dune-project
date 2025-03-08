@@ -11,7 +11,7 @@
 
 (maintainers "Maintainer Name <maintainer@example.com>")
 
-(license LICENSE)
+(license "MIT")
 
 (documentation https://url/to/documentation)
 
@@ -20,9 +20,11 @@
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends 
-   (ocaml (>= 5.2.1))
+   (ocaml 
+     (>= 5.2.1))
    dune
-   (odoc :with-doc))
+   (odoc :with-doc)
+   ocamlformat
    pyre-ast
    base
    cmdliner)
