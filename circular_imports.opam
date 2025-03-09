@@ -2,15 +2,15 @@
 opam-version: "2.0"
 synopsis: "A short synopsis"
 description: "A longer description"
-maintainer: ["Maintainer Name <maintainer@example.com>"]
-authors: ["Author Name <author@example.com>"]
+maintainer: ["Simon Danielsson <simon.danielsson99@hotmail.com>"]
+authors: ["Simon Danielsson <simon.danielsson99@hotmail.com>"]
 license: "MIT"
 tags: ["add topics" "to describe" "your" "project"]
-homepage: "https://github.com/username/reponame"
+homepage: "https://github.com/simondanielsson/cyclopy"
 doc: "https://url/to/documentation"
-bug-reports: "https://github.com/username/reponame/issues"
+bug-reports: "https://github.com/simondanielsson/cyclopy/issues"
 depends: [
-  "ocaml" {>= "5.0.0"}
+  "ocaml" {<= "5.0.0"}
   "dune" {>= "3.17"}
   "core"
   "odoc" {with-doc}
@@ -36,4 +36,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/username/reponame.git"
+dev-repo: "git+https://github.com/simondanielsson/cyclopy.git"

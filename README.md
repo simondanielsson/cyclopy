@@ -33,7 +33,7 @@ cd cyclopy
 2. Create a local switch for the project:
 
 ```bash
-opam switch create . --deps-only
+opam switch create . --deps-only ocaml-base-compiler.5.0.0
 eval $(opam env)
 ```
 
@@ -93,6 +93,14 @@ and open the documentation using
 
 ```bash
 open _build/default/_doc/_html/index.html
+```
+
+## Updating dependencies
+
+Simply change the `depends` stanza in `dune-project`, and update the lockfile:
+
+```bash
+dune pkg lock
 ```
 
 ## Contributing

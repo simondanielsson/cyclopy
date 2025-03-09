@@ -2,15 +2,14 @@
 
 (name circular_imports)
 
-(cram enable)
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github simondanielsson/cyclopy))
 
-(authors "Author Name <author@example.com>")
+(authors "Simon Danielsson <simon.danielsson99@hotmail.com>")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
+(maintainers "Simon Danielsson <simon.danielsson99@hotmail.com>")
 
 (license "MIT")
 
@@ -22,7 +21,7 @@
  (description "A longer description")
  (depends
    (ocaml
-     (>= 5.0.0))
+     (<= 5.0.0))
    dune
    core
    (odoc :with-doc)

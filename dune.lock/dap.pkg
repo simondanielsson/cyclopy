@@ -1,0 +1,31 @@
+(version 1.0.6)
+
+(build
+ (progn
+  (when
+   %{pkg-self:dev}
+   (run dune subst))
+  (run dune build -p %{pkg-self:name} -j %{jobs})))
+
+(depends
+ ocaml
+ dune
+ yojson
+ ppx_here
+ ppx_deriving
+ ppx_deriving_yojson
+ ppx_expect
+ lwt
+ lwt_ppx
+ lwt_react
+ react
+ angstrom
+ angstrom-lwt-unix
+ logs)
+
+(source
+ (fetch
+  (url
+   https://github.com/hackwaly/ocaml-dap/releases/download/1.0.6/dap-1.0.6.tbz)
+  (checksum
+   sha256=e0b249a3e7382125402ad15d71f4924eef60cfcec326383a5168d424087200ff)))
