@@ -103,6 +103,12 @@ Simply change the `depends` stanza in `dune-project`, and update the lockfile:
 dune pkg lock
 ```
 
+Lastly, sync the `.opam` file:
+
+```bash
+dune build circular_imports.opam
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

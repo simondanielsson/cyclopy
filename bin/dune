@@ -1,5 +1,4 @@
 (executable
  (public_name circular_imports)
  (name main)
- (libraries circular_imports base stdio)
- (modes exe byte))
+ (libraries circular_imports base))

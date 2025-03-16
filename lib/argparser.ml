@@ -2,7 +2,7 @@ open Cmdliner
 
 (* Define a term for the command line interface *)
 let term callback =
-  let file =
+  let entrypoint_file =
     Arg.(
       required
       & pos
@@ -18,7 +18,10 @@ let term callback =
   let verbose =
     Arg.(value & flag & info [ "v"; "verbose" ] ~doc:"Enable verbose logging")
   in
-  Term.(const (fun file verbose -> callback file verbose) $ file $ verbose)
+  Term.(
+    const (fun verbose entrypoint_file -> callback ~verbose ~entrypoint_file)
+    $ verbose
+    $ entrypoint_file)
 ;;
 
 (* Define a info for the command line interface *)

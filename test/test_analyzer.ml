@@ -6,7 +6,7 @@ let%test_module "Analyzer" =
       let project_root = "my_project" in
       let file_path = "my_project/src/my/module/path.py" in
       let module_name =
-        Circular_imports.Analyzer.compute_full_module_name ~project_root file_path
+        Circular_imports.Module_imports.module_name_of_path ~project_root file_path
       in
       [%test_result: string] module_name ~expect:"src.my.module.path"
     ;;
@@ -15,7 +15,7 @@ let%test_module "Analyzer" =
       let project_root = "." in
       let file_path = "utils/helper.py" in
       let module_name =
-        Circular_imports.Analyzer.compute_full_module_name ~project_root file_path
+        Circular_imports.Module_imports.module_name_of_path ~project_root file_path
       in
       [%test_result: string] module_name ~expect:"utils.helper"
     ;;
