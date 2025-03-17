@@ -1,6 +1,6 @@
+from utils.d import function_d
 import b
 from c import function_c
-from nested import test
 
 
 def function_a():

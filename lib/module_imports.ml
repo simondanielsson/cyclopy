@@ -36,7 +36,52 @@ let extract_imports_from_module
       import :: imports
     | _ -> imports
   in
-  List.fold module_ast.body ~init:[] ~f:(fun acc stmt -> visit_stmt acc stmt)
+  let module_imports =
+    List.fold module_ast.body ~init:[] ~f:(fun acc stmt -> visit_stmt acc stmt)
+  in
+  let get_package_name import =
+    let target_module_components = String.split import ~on:'.' in
+    let target_package_components =
+      List.take target_module_components (List.length target_module_components - 1)
+    in
+    String.concat ~sep:"." target_package_components
+  in
+  let is_in_same_package import =
+    String.equal
+      (get_package_name (Import.target_of_t import))
+      (get_package_name module_name)
+  in
+  let add_init_import import =
+    let target_module_components = String.split (Import.target_of_t import) ~on:'.' in
+    let target_package_components_rev =
+      List.take target_module_components (List.length target_module_components - 1)
+      |> List.rev
+    in
+    let target_init_module_components =
+      "__init__" :: target_package_components_rev |> List.rev
+    in
+    let init_import =
+      Import.make
+        ~source:module_name
+        ~target:(String.concat target_init_module_components ~sep:".")
+    in
+    init_import
+  in
+  let imports =
+    List.fold module_imports ~init:module_imports ~f:(fun acc import ->
+      if is_in_same_package import then acc else add_init_import import :: acc)
+  in
+  let imports_without_duplicates =
+    List.remove_consecutive_duplicates imports ~equal:Import.equal
+  in
+  List.iter imports_without_duplicates ~f:(fun import ->
+    Logger.log
+      verbose
+      (Printf.sprintf
+         "Adding import: %s -> %s"
+         (Import.source_of_t import)
+         (Import.target_of_t import)));
+  imports_without_duplicates
 ;;
 
 (* Compute the full module name based on the file path and project root *)

@@ -2,7 +2,10 @@ open Base
 
 type t = string list list
 
-(* Build a graph representing import relationships *)
+(** Build a graph representing import relationships.
+
+    The graph is represented as a mapping from the module name to the modules it imports
+    *)
 let build_graph imports =
   let graph = Hashtbl.create (module String) in
   List.iter imports ~f:(fun import ->
@@ -14,7 +17,7 @@ let build_graph imports =
   graph
 ;;
 
-(* Find cycles in the import graph using DFS *)
+(** Find cycles in the import graph using DFS *)
 let find ~verbose (imports : Project_imports.t) =
   let graph = build_graph imports in
   let visited = Hashtbl.create (module String) in

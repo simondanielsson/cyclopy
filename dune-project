@@ -23,6 +23,7 @@
    (ocaml
      (<= 5.0.0))
    core
+   (core_unix (>= v0.16.0))
    (earlybird
      (>= 1.3.3))
    ocamlformat

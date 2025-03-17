@@ -9,3 +9,6 @@ val source_of_t : t -> string
 
 (** Get the import's target. *)
 val target_of_t : t -> string
+
+(** Check if two imports are equal. *)
+val equal : t -> t -> bool

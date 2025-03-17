@@ -1,0 +1,12 @@
+(version v0.16.1)
+
+(build
+ (run dune build -p %{pkg-self:name} -j %{jobs}))
+
+(depends ocaml dune dune-configurator)
+
+(source
+ (fetch
+  (url
+   https://github.com/janestreet/ocaml_intrinsics/archive/refs/tags/v0.16.1.tar.gz)
+  (checksum md5=c1ba2b1321f8fb5e3752b7d9250bfc6f)))

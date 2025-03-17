@@ -1,3 +1,3 @@
-from ..main import function_a
+from main import function_a
 
 test = "value"
