@@ -1,6 +1,6 @@
 (lang dune 3.17)
 
-(name circular_imports)
+(name cyclopy)
 
 (generate_opam_files true)
 
@@ -13,10 +13,8 @@
 
 (license "MIT")
 
-(documentation https://url/to/documentation)
-
 (package
- (name circular_imports)
+ (name cyclopy)
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends
@@ -24,6 +22,8 @@
      (<= 5.0.0))
    core
    (core_unix (>= v0.16.0))
+   (logs (>= 0.8.0))
+   fmt
    (earlybird
      (>= 1.3.3))
    ocamlformat
@@ -33,4 +33,4 @@
    (expect_test_helpers_core :with-test)
    )
  (tags
-  ("add topics" "to describe" your project)))
+  ("python" "circular imports" imports)))

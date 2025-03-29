@@ -1,4 +1,4 @@
 (executable
- (public_name circular_imports)
+ (public_name cyclopy)
  (name main)
- (libraries circular_imports base))
+ (libraries cyclopy base))

@@ -1,3 +1,15 @@
 (library
- (name circular_imports)
- (libraries cmdliner base core core_unix.sys_unix fpath stdio pyre-ast sexplib sexplib0))
+ (name cyclopy)
+ (libraries
+   cmdliner
+   base
+   core
+   core_unix.sys_unix
+   fpath
+   stdio
+   pyre-ast
+   sexplib
+   sexplib0
+   )
+ (inline_tests)
+ (preprocess (pps ppx_jane)))

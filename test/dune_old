@@ -1,0 +1,6 @@
+(library
+ (name cyclopy_test)
+ (modules test_module_imports)
+ (libraries cyclopy core expect_test_helpers_core)
+ (inline_tests)
+ (preprocess (pps ppx_jane)))
