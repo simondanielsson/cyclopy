@@ -137,7 +137,9 @@ let find_cycles_in_scc scc graph : string list list =
         else if
           Hash_set.mem ssc_set neighbor
           && not (List.mem path neighbor ~equal:String.equal)
-        then find_cycle ~start_vertex ~current_vertex:neighbor ~path ~visited))
+        then (
+          print_endline "Continuing";
+          find_cycle ~start_vertex ~current_vertex:neighbor ~path ~visited)))
   in
   (* Find all cycles from each node in the SSC. (Might have duplicates) *)
   List.iter scc ~f:(fun start_vertex ->
